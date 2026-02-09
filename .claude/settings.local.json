@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(dir:*)",
+      "Bash(pnpm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(pnpm prisma generate:*)",
+      "Bash(npx jest --no-cache)",
+      "Bash(npx jest --no-cache --testPathPattern=\"spec\\\\.ts$\" --passWithNoTests)",
+      "Bash(npx jest:*)",
+      "Bash(ls:*)",
+      "Bash(pnpm --filter web exec tsc:*)",
+      "Bash(pnpm --filter api exec tsc:*)",
+      "Bash(pnpm test:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(pnpm prisma db push:*)",
+      "Bash(pnpm prisma db seed:*)",
+      "Bash(pnpm --filter @fla7a/database add:*)",
+      "Bash(pnpm dev)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c \"taskkill /PID 34604 /F\")",
+      "Bash(curl:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

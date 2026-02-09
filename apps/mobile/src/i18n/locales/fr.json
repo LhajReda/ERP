@@ -1,0 +1,129 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher...",
+    "noData": "Aucune donnée",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "mad": "MAD",
+    "ha": "ha",
+    "kg": "kg"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "phone": "Numéro de téléphone",
+    "password": "Mot de passe",
+    "phonePlaceholder": "+212 6XX XXX XXX",
+    "loginButton": "Se connecter",
+    "registerButton": "Créer un compte",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "tenantName": "Nom de l'exploitation",
+    "logout": "Déconnexion",
+    "logoutConfirm": "Voulez-vous vous déconnecter ?"
+  },
+  "tabs": {
+    "dashboard": "Accueil",
+    "farms": "Exploitations",
+    "culture": "Cultures",
+    "stock": "Stock",
+    "more": "Plus"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue",
+    "totalArea": "Surface totale",
+    "cultivatedArea": "Surface cultivée",
+    "activeCycles": "Cycles actifs",
+    "stockAlerts": "Alertes stock",
+    "monthlyRevenue": "Recettes du mois",
+    "monthlyExpenses": "Dépenses du mois",
+    "balance": "Solde",
+    "employees": "Employés",
+    "presentToday": "Présents aujourd'hui",
+    "certifications": "Certifications",
+    "quickActions": "Actions rapides",
+    "markAttendance": "Pointer présence",
+    "addActivity": "Ajouter activité",
+    "scanQR": "Scanner QR",
+    "viewReports": "Voir rapports"
+  },
+  "farms": {
+    "title": "Mes exploitations",
+    "addFarm": "Nouvelle exploitation",
+    "area": "Superficie",
+    "parcels": "Parcelles",
+    "employees": "Employés",
+    "region": "Région",
+    "waterSource": "Source d'eau",
+    "farmType": "Type"
+  },
+  "culture": {
+    "title": "Cycles culturaux",
+    "addCycle": "Nouveau cycle",
+    "crop": "Culture",
+    "variety": "Variété",
+    "season": "Saison",
+    "status": "Statut",
+    "sowing": "Semis",
+    "harvest": "Récolte",
+    "yield": "Rendement",
+    "activities": "Activités",
+    "addActivity": "Nouvelle activité",
+    "estimatedYield": "Rendement estimé",
+    "actualYield": "Rendement réel"
+  },
+  "stock": {
+    "title": "Stock & Intrants",
+    "addProduct": "Nouveau produit",
+    "product": "Produit",
+    "quantity": "Quantité",
+    "minStock": "Seuil minimum",
+    "category": "Catégorie",
+    "lowStock": "Stock bas",
+    "movement": "Mouvement",
+    "entry": "Entrée",
+    "exit": "Sortie",
+    "supplier": "Fournisseur"
+  },
+  "hr": {
+    "title": "Ressources humaines",
+    "attendance": "Présence",
+    "payroll": "Paie",
+    "markPresent": "Marquer présent",
+    "scanQR": "Scanner QR présence"
+  },
+  "finance": {
+    "title": "Finance",
+    "invoices": "Factures",
+    "payments": "Paiements",
+    "treasury": "Trésorerie"
+  },
+  "chat": {
+    "title": "Assistant FLA7A",
+    "placeholder": "Posez votre question...",
+    "send": "Envoyer"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "about": "À propos",
+    "version": "Version"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "retry": "إعادة المحاولة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "search": "بحث...",
+    "noData": "لا توجد بيانات",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "yes": "نعم",
+    "no": "لا",
+    "mad": "درهم",
+    "ha": "هكتار",
+    "kg": "كلغ"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "phone": "رقم الهاتف",
+    "password": "كلمة المرور",
+    "phonePlaceholder": "+212 6XX XXX XXX",
+    "loginButton": "دخول",
+    "registerButton": "إنشاء حساب",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "firstName": "الاسم",
+    "lastName": "اللقب",
+    "email": "البريد الإلكتروني",
+    "tenantName": "اسم الاستثمارية",
+    "logout": "تسجيل الخروج",
+    "logoutConfirm": "هل تريد تسجيل الخروج؟"
+  },
+  "tabs": {
+    "dashboard": "الرئيسية",
+    "farms": "المزارع",
+    "culture": "الزراعات",
+    "stock": "المخزون",
+    "more": "المزيد"
+  },
+  "dashboard": {
+    "title": "لوحة القيادة",
+    "welcome": "مرحبا",
+    "totalArea": "المساحة الإجمالية",
+    "cultivatedArea": "المساحة المزروعة",
+    "activeCycles": "الدورات النشطة",
+    "stockAlerts": "تنبيهات المخزون",
+    "monthlyRevenue": "إيرادات الشهر",
+    "monthlyExpenses": "مصاريف الشهر",
+    "balance": "الرصيد",
+    "employees": "الموظفون",
+    "presentToday": "الحاضرون اليوم",
+    "certifications": "الشهادات",
+    "quickActions": "إجراءات سريعة",
+    "markAttendance": "تسجيل الحضور",
+    "addActivity": "إضافة نشاط",
+    "scanQR": "مسح QR",
+    "viewReports": "عرض التقارير"
+  },
+  "farms": {
+    "title": "مزارعي",
+    "addFarm": "مزرعة جديدة",
+    "area": "المساحة",
+    "parcels": "القطع",
+    "employees": "العمال",
+    "region": "الجهة",
+    "waterSource": "مصدر الماء",
+    "farmType": "النوع"
+  },
+  "culture": {
+    "title": "الدورات الزراعية",
+    "addCycle": "دورة جديدة",
+    "crop": "المحصول",
+    "variety": "الصنف",
+    "season": "الموسم",
+    "status": "الحالة",
+    "sowing": "الزرع",
+    "harvest": "الحصاد",
+    "yield": "المردود",
+    "activities": "الأنشطة",
+    "addActivity": "نشاط جديد",
+    "estimatedYield": "المردود المتوقع",
+    "actualYield": "المردود الفعلي"
+  },
+  "stock": {
+    "title": "المخزون والمدخلات",
+    "addProduct": "منتج جديد",
+    "product": "المنتج",
+    "quantity": "الكمية",
+    "minStock": "الحد الأدنى",
+    "category": "الفئة",
+    "lowStock": "مخزون منخفض",
+    "movement": "حركة",
+    "entry": "دخول",
+    "exit": "خروج",
+    "supplier": "المورد"
+  },
+  "hr": {
+    "title": "الموارد البشرية",
+    "attendance": "الحضور",
+    "payroll": "الأجور",
+    "markPresent": "تسجيل حاضر",
+    "scanQR": "مسح QR للحضور"
+  },
+  "finance": {
+    "title": "المالية",
+    "invoices": "الفواتير",
+    "payments": "المدفوعات",
+    "treasury": "الخزينة"
+  },
+  "chat": {
+    "title": "مساعد فلاحة",
+    "placeholder": "اطرح سؤالك...",
+    "send": "إرسال"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "notifications": "الإشعارات",
+    "about": "حول",
+    "version": "النسخة"
+  }
+}

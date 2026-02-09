@@ -1,0 +1,129 @@
+{
+  "common": {
+    "loading": "Tsenna chwiya...",
+    "error": "Kayn mouchkil",
+    "retry": "3awed",
+    "save": "Sjel",
+    "cancel": "Annuler",
+    "delete": "7yed",
+    "edit": "Bedel",
+    "add": "Zid",
+    "search": "9lleb...",
+    "noData": "Ma kayn walo",
+    "confirm": "Akked",
+    "back": "Rje3",
+    "close": "Sed",
+    "yes": "Iyeh",
+    "no": "La",
+    "mad": "drhem",
+    "ha": "hectar",
+    "kg": "kilo"
+  },
+  "auth": {
+    "login": "Dkhol",
+    "register": "Tsjel",
+    "phone": "Nimero d telefon",
+    "password": "Mot de passe",
+    "phonePlaceholder": "+212 6XX XXX XXX",
+    "loginButton": "Dkhol",
+    "registerButton": "Dir compte",
+    "forgotPassword": "Nsiti mot de passe?",
+    "noAccount": "Ma 3ndekch compte?",
+    "hasAccount": "3ndek deja compte?",
+    "firstName": "Smiytek",
+    "lastName": "Lkab",
+    "email": "Email",
+    "tenantName": "Smit lmzr3a",
+    "logout": "Khroj",
+    "logoutConfirm": "Bghiti tkhroj?"
+  },
+  "tabs": {
+    "dashboard": "Accueil",
+    "farms": "Lmzare3",
+    "culture": "Zzre3",
+    "stock": "Lmakhzoun",
+    "more": "Kter"
+  },
+  "dashboard": {
+    "title": "Tableau dyal lkhdma",
+    "welcome": "Mrhba bik",
+    "totalArea": "Lmssa7a kamla",
+    "cultivatedArea": "Lmssa7a mzrou3a",
+    "activeCycles": "Ddourat li khddamin",
+    "stockAlerts": "Alertes dyal lmakhzoun",
+    "monthlyRevenue": "Dakhel d chher",
+    "monthlyExpenses": "Msaref d chher",
+    "balance": "Lba9i",
+    "employees": "Lkhdama",
+    "presentToday": "Li jayine lyoum",
+    "certifications": "Chhadat",
+    "quickActions": "Actions sre3in",
+    "markAttendance": "Sjel l7dour",
+    "addActivity": "Zid ncha6",
+    "scanQR": "Scanner QR",
+    "viewReports": "Chouf rapports"
+  },
+  "farms": {
+    "title": "Lmzare3 dyali",
+    "addFarm": "Mzr3a jdida",
+    "area": "Lmssa7a",
+    "parcels": "L9it3at",
+    "employees": "Lkhdama",
+    "region": "Ljiha",
+    "waterSource": "Lma",
+    "farmType": "Nno3"
+  },
+  "culture": {
+    "title": "Ddourat dyal zzri3a",
+    "addCycle": "Doura jdida",
+    "crop": "Zzre3",
+    "variety": "Ssanf",
+    "season": "Lmawsem",
+    "status": "L7ala",
+    "sowing": "Zzra3",
+    "harvest": "L7ssad",
+    "yield": "Lmardoud",
+    "activities": "Lanchi6at",
+    "addActivity": "Ncha6 jdid",
+    "estimatedYield": "Lmardoud li kantw99o3",
+    "actualYield": "Lmardoud l7a9i9i"
+  },
+  "stock": {
+    "title": "Lmakhzoun w lmadkholat",
+    "addProduct": "Produit jdid",
+    "product": "Lproduit",
+    "quantity": "Lkemiya",
+    "minStock": "L7add l2adna",
+    "category": "Ssanf",
+    "lowStock": "Makhzoun 9lil",
+    "movement": "7araka",
+    "entry": "Dkhoul",
+    "exit": "Khroj",
+    "supplier": "Lfournicer"
+  },
+  "hr": {
+    "title": "Lmoustawdafin",
+    "attendance": "L7dour",
+    "payroll": "Lkhlass",
+    "markPresent": "Sjel 7ader",
+    "scanQR": "Scanner QR dyal l7dour"
+  },
+  "finance": {
+    "title": "Lflous",
+    "invoices": "Lfwatir",
+    "payments": "Lkhlassat",
+    "treasury": "Ssandou9"
+  },
+  "chat": {
+    "title": "Mou3awin FLA7A",
+    "placeholder": "Sor7 b sou2alek...",
+    "send": "Sift"
+  },
+  "settings": {
+    "title": "I3dadat",
+    "language": "Llougha",
+    "notifications": "L2ich3arat",
+    "about": "3la l'appli",
+    "version": "Version"
+  }
+}

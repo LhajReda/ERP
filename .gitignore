@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+.next/
+.turbo/
+out/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Expo / React Native
+.expo/
+android/
+ios/
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+
+# Prisma
+packages/database/prisma/*.db
+packages/database/prisma/migrations/*.sql.bak
+
+# Docker
+docker/data/
+
+# MinIO
+minio_data/
+
+# Uploads
+uploads/
+temp/

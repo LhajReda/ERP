@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "FLA7A",
+    "slug": "fla7a",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "fla7a",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B7340"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ma.fla7a.erp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Scanner les codes QR pour la présence",
+        "NSLocationWhenInUseUsageDescription": "Localiser les parcelles et activités"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B7340"
+      },
+      "package": "ma.fla7a.erp",
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-location",
+      "expo-secure-store",
+      "expo-image-picker"
+    ]
+  }
+}

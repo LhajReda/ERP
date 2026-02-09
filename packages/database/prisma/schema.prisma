@@ -1,0 +1,960 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// =============================================
+// ENUMS MAROCAINS
+// =============================================
+
+enum Region {
+  TANGER_TETOUAN_AL_HOCEIMA
+  ORIENTAL
+  FES_MEKNES
+  RABAT_SALE_KENITRA
+  BENI_MELLAL_KHENIFRA
+  CASABLANCA_SETTAT
+  MARRAKECH_SAFI
+  DRAA_TAFILALET
+  SOUSS_MASSA
+  GUELMIM_OUED_NOUN
+  LAAYOUNE_SAKIA_EL_HAMRA
+  DAKHLA_OUED_ED_DAHAB
+}
+
+enum CropType {
+  // Cereales
+  BLE_TENDRE
+  BLE_DUR
+  ORGE
+  MAIS
+  RIZ
+  // Legumineuses
+  LENTILLES
+  POIS_CHICHES
+  FEVES
+  PETIT_POIS
+  // Maraichage
+  TOMATE
+  POMME_DE_TERRE
+  OIGNON
+  POIVRON
+  COURGETTE
+  HARICOT_VERT
+  CAROTTE
+  NAVET
+  PASTEQUE
+  MELON
+  FRAISE
+  CONCOMBRE
+  AUBERGINE
+  // Arboriculture
+  OLIVIER
+  AGRUMES_ORANGE
+  AGRUMES_CLEMENTINE
+  AGRUMES_CITRON
+  AGRUMES_MANDARINE
+  POMMIER
+  AMANDIER
+  GRENADIER
+  FIGUIER
+  PRUNIER
+  ABRICOTIER
+  PALMIER_DATTIER
+  AVOCATIER
+  BANANIER
+  NOYER
+  CERISIER
+  VIGNE
+  // Cultures industrielles
+  BETTERAVE_SUCRIERE
+  CANNE_A_SUCRE
+  TOURNESOL
+  COTON
+  // Cultures speciales
+  SAFRAN
+  ARGANIER
+  ROSE_DAMAS
+  CACTUS
+  CAROUBIER
+  HENNE
+  CUMIN
+  ANIS
+  // Fourrageres
+  LUZERNE
+  BERSIM
+  MAIS_FOURRAGER
+  AVOINE
+}
+
+enum SoilType {
+  ARGILEUX
+  SABLEUX
+  LIMONEUX
+  CALCAIRE
+  ARGILO_SABLEUX
+  ARGILO_LIMONEUX
+  SABLO_LIMONEUX
+  HUMIFERE
+  CAILLOUTEUX
+}
+
+enum WaterSource {
+  BARRAGE
+  PUITS
+  FORAGE
+  SEGUIA
+  OUED
+  PLUVIAL
+  STATION_POMPAGE
+  BASSIN
+}
+
+enum FarmType {
+  IRRIGUE
+  BOUR
+  MIXTE
+}
+
+enum IrrigationType {
+  GOUTTE_A_GOUTTE
+  ASPERSION
+  GRAVITAIRE
+  PIVOT
+  MICRO_ASPERSION
+  AUCUNE
+}
+
+enum ParcelStatus {
+  CULTIVEE
+  JACHERE
+  PREPARATION
+  REPOS
+  ABANDONNEE
+}
+
+enum Season {
+  AUTOMNE_HIVER
+  PRINTEMPS_ETE
+  ANNUELLE
+  PERENNE
+}
+
+enum CycleStatus {
+  PLANIFIE
+  EN_COURS
+  RECOLTE
+  TERMINE
+  ABANDONNE
+}
+
+enum ActivityType {
+  LABOUR
+  SEMIS
+  PLANTATION
+  TRAITEMENT_PHYTO
+  FERTILISATION
+  IRRIGATION
+  DESHERBAGE
+  TAILLE
+  RECOLTE
+  CONDITIONNEMENT
+  ANALYSE_SOL
+  AUTRE
+}
+
+enum ProductCategory {
+  SEMENCES
+  ENGRAIS
+  PHYTOSANITAIRE
+  MATERIEL
+  CARBURANT
+  PIECE_RECHANGE
+  EMBALLAGE
+  AUTRE
+}
+
+enum UnitType {
+  KG
+  TONNE
+  LITRE
+  ML
+  UNITE
+  SAC
+  BIDON
+  CAISSE
+  PALETTE
+  HECTARE
+  METRE_CARRE
+}
+
+enum MovementType {
+  ENTREE
+  SORTIE
+  AJUSTEMENT_PLUS
+  AJUSTEMENT_MOINS
+  PERTE
+  TRANSFERT
+  RETOUR
+}
+
+enum InvoiceType {
+  VENTE
+  ACHAT
+  AVOIR_VENTE
+  AVOIR_ACHAT
+}
+
+enum InvoiceStatus {
+  BROUILLON
+  VALIDEE
+  ENVOYEE
+  PARTIELLEMENT_PAYEE
+  PAYEE
+  ANNULEE
+  EN_LITIGE
+}
+
+enum PaymentMethod {
+  ESPECES
+  CHEQUE
+  VIREMENT
+  TRAITE
+  CARTE_BANCAIRE
+  MOBILE_MONEY
+  CREDIT_AGRICOLE
+  COMPENSATION
+}
+
+enum TransactionType {
+  RECETTE
+  DEPENSE
+  TRANSFERT
+}
+
+enum ExpenseCategory {
+  SEMENCES
+  ENGRAIS
+  PHYTOSANITAIRES
+  MAIN_OEUVRE
+  IRRIGATION
+  CARBURANT
+  LOCATION_MATERIEL
+  TRANSPORT
+  ASSURANCE_AGRICOLE
+  ELECTRICITE
+  MAINTENANCE
+  VETERINAIRE
+  ALIMENTATION_BETAIL
+  VENTE_RECOLTE
+  SUBVENTION_FDA
+  CREDIT_CAM
+  AUTRE
+}
+
+enum EmployeeType {
+  PERMANENT
+  SAISONNIER
+  JOURNALIER
+  STAGIAIRE
+}
+
+enum WorkerRole {
+  OUVRIER
+  CHEF_EQUIPE
+  TECHNICIEN
+  CHAUFFEUR
+  GARDIEN
+  MECANICIEN
+  COMPTABLE
+  COMMERCIAL
+  DIRECTEUR
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  CONGE
+  MALADIE
+  FERIE
+  DEMI_JOURNEE
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  COMPTABLE
+  CHEF_EQUIPE
+  OUVRIER
+  COMMERCIAL
+  AUDITEUR
+}
+
+enum TvaRate {
+  TVA_0
+  TVA_7
+  TVA_10
+  TVA_14
+  TVA_20
+}
+
+enum CertificationType {
+  ONSSA
+  GLOBAL_GAP
+  BIO_MAROC
+  HACCP
+  ISO_22000
+  MAROC_LABEL
+  FAIR_TRADE
+}
+
+// =============================================
+// MODELES PRINCIPAUX
+// =============================================
+
+model Tenant {
+  id              String    @id @default(cuid())
+  name            String
+  subdomain       String    @unique
+  plan            String    @default("fellah")
+  isActive        Boolean   @default(true)
+  maxFarms        Int       @default(1)
+  maxUsers        Int       @default(5)
+  subscriptionEnd DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  users           User[]
+  farms           Farm[]
+
+  @@index([subdomain])
+}
+
+model User {
+  id              String         @id @default(cuid())
+  email           String?        @unique
+  phone           String         @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  firstNameAr     String?
+  lastNameAr      String?
+  cin             String?        @unique
+  role            UserRole       @default(OUVRIER)
+  language        String         @default("fr")
+  isActive        Boolean        @default(true)
+  lastLogin       DateTime?
+  twoFactorSecret String?
+  avatarUrl       String?
+  tenantId        String
+  tenant          Tenant         @relation(fields: [tenantId], references: [id])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+
+  @@index([tenantId])
+  @@index([phone])
+  @@index([email])
+}
+
+model Farm {
+  id                 String          @id @default(cuid())
+  name               String
+  nameAr             String?
+  registrationNumber String?         @unique
+  ice                String?         @unique
+  iff                String?
+  patente            String?
+  cnss               String?
+  onssaLicense       String?
+  region             Region
+  province           String
+  commune            String
+  douar              String?
+  address            String?
+  gpsLat             Float?
+  gpsLng             Float?
+  totalArea          Float
+  cultivatedArea     Float?
+  waterSource        WaterSource
+  farmType           FarmType
+  phone              String?
+  email              String?
+  tenantId           String
+  tenant             Tenant          @relation(fields: [tenantId], references: [id])
+  parcels            Parcel[]
+  employees          Employee[]
+  products           Product[]
+  suppliers          Supplier[]
+  clients            Client[]
+  bankAccounts       BankAccount[]
+  invoices           Invoice[]
+  certifications     Certification[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([tenantId])
+  @@index([region])
+}
+
+model Parcel {
+  id             String         @id @default(cuid())
+  name           String
+  nameAr         String?
+  code           String?
+  area           Float
+  soilType       SoilType
+  irrigationType IrrigationType
+  waterQuota     Float?
+  geoPolygon     Json?
+  gpsCenter      Json?
+  altitude       Float?
+  currentCrop    String?
+  status         ParcelStatus   @default(PREPARATION)
+  notes          String?
+  farmId         String
+  farm           Farm           @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  cultureCycles  CultureCycle[]
+  soilAnalyses   SoilAnalysis[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([farmId])
+}
+
+model SoilAnalysis {
+  id            String   @id @default(cuid())
+  parcelId      String
+  parcel        Parcel   @relation(fields: [parcelId], references: [id])
+  date          DateTime
+  ph            Float?
+  nitrogen      Float?
+  phosphorus    Float?
+  potassium     Float?
+  organicMatter Float?
+  salinity      Float?
+  texture       String?
+  labName       String?
+  reportUrl     String?
+  createdAt     DateTime @default(now())
+
+  @@index([parcelId])
+}
+
+model CultureCycle {
+  id              String         @id @default(cuid())
+  parcelId        String
+  parcel          Parcel         @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  cropType        CropType
+  variety         String
+  varietyAr       String?
+  season          Season
+  campaignYear    String
+  sowingDate      DateTime
+  expectedHarvest DateTime
+  actualHarvest   DateTime?
+  plantDensity    Float?
+  estimatedYield  Float?
+  actualYield     Float?
+  totalCost       Float          @default(0)
+  totalRevenue    Float          @default(0)
+  status          CycleStatus    @default(PLANIFIE)
+  notes           String?
+  activities      FarmActivity[]
+  inputs          InputUsage[]
+  harvests        Harvest[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([parcelId])
+  @@index([status])
+  @@index([cropType])
+}
+
+model FarmActivity {
+  id               String       @id @default(cuid())
+  cycleId          String
+  cycle            CultureCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  type             ActivityType
+  date             DateTime
+  description      String
+  descriptionAr    String?
+  cost             Float        @default(0)
+  laborHours       Float?
+  workersCount     Int?
+  equipmentUsed    String?
+  weatherCondition String?
+  photoUrls        String[]
+  gpsLat           Float?
+  gpsLng           Float?
+  createdBy        String
+  createdAt        DateTime     @default(now())
+
+  @@index([cycleId])
+  @@index([date])
+  @@index([type])
+}
+
+model InputUsage {
+  id        String       @id @default(cuid())
+  cycleId   String
+  cycle     CultureCycle @relation(fields: [cycleId], references: [id])
+  productId String
+  product   Product      @relation(fields: [productId], references: [id])
+  quantity  Float
+  unitPrice Float
+  totalCost Float
+  date      DateTime
+  method    String?
+  dosage    String?
+  dai       Int?
+  notes     String?
+  createdAt DateTime     @default(now())
+
+  @@index([cycleId])
+  @@index([productId])
+}
+
+model Harvest {
+  id              String       @id @default(cuid())
+  cycleId         String
+  cycle           CultureCycle @relation(fields: [cycleId], references: [id])
+  date            DateTime
+  quantity        Float
+  unit            UnitType     @default(KG)
+  quality         String?
+  caliber         String?
+  storageLocation String?
+  destinationType String?
+  photoUrls       String[]
+  notes           String?
+  createdAt       DateTime     @default(now())
+
+  @@index([cycleId])
+  @@index([date])
+}
+
+model Product {
+  id                String          @id @default(cuid())
+  name              String
+  nameAr            String?
+  sku               String?         @unique
+  barcode           String?
+  category          ProductCategory
+  unit              UnitType
+  currentStock      Float           @default(0)
+  minStock          Float           @default(0)
+  maxStock          Float?
+  unitPrice         Float           @default(0)
+  lastPurchasePrice Float?
+  onssaApproval     String?
+  activeSubstance   String?
+  toxicityClass     String?
+  expiryDate        DateTime?
+  storageCondition  String?
+  photoUrl          String?
+  farmId            String
+  farm              Farm            @relation(fields: [farmId], references: [id])
+  supplierId        String?
+  supplier          Supplier?       @relation(fields: [supplierId], references: [id])
+  movements         StockMovement[]
+  inputUsages       InputUsage[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([farmId])
+  @@index([category])
+  @@index([currentStock])
+}
+
+model StockMovement {
+  id           String       @id @default(cuid())
+  productId    String
+  product      Product      @relation(fields: [productId], references: [id])
+  type         MovementType
+  quantity     Float
+  unitPrice    Float
+  totalPrice   Float
+  reference    String?
+  batchNumber  String?
+  expiryDate   DateTime?
+  fromLocation String?
+  toLocation   String?
+  reason       String?
+  date         DateTime     @default(now())
+  createdBy    String
+  createdAt    DateTime     @default(now())
+
+  @@index([productId])
+  @@index([date])
+  @@index([type])
+}
+
+model Supplier {
+  id        String    @id @default(cuid())
+  name      String
+  nameAr    String?
+  ice       String?
+  contact   String?
+  phone     String?
+  email     String?
+  address   String?
+  city      String?
+  category  String?
+  rating    Int?
+  notes     String?
+  farmId    String
+  farm      Farm      @relation(fields: [farmId], references: [id])
+  products  Product[]
+  invoices  Invoice[] @relation("SupplierInvoices")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([farmId])
+}
+
+model BankAccount {
+  id            String        @id @default(cuid())
+  bankName      String
+  accountNumber String
+  rib           String?
+  iban          String?
+  swift         String?
+  balance       Float         @default(0)
+  currency      String        @default("MAD")
+  isDefault     Boolean       @default(false)
+  farmId        String
+  farm          Farm          @relation(fields: [farmId], references: [id])
+  transactions  Transaction[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([farmId])
+}
+
+model Invoice {
+  id              String        @id @default(cuid())
+  invoiceNumber   String        @unique
+  type            InvoiceType
+  status          InvoiceStatus @default(BROUILLON)
+  clientId        String?
+  client          Client?       @relation(fields: [clientId], references: [id])
+  supplierId      String?
+  supplier        Supplier?     @relation("SupplierInvoices", fields: [supplierId], references: [id])
+  farmId          String
+  farm            Farm          @relation(fields: [farmId], references: [id])
+  date            DateTime
+  dueDate         DateTime
+  subtotal        Float
+  discountPercent Float?        @default(0)
+  discountAmount  Float?        @default(0)
+  tvaRate         TvaRate       @default(TVA_0)
+  tvaAmount       Float         @default(0)
+  total           Float
+  amountPaid      Float         @default(0)
+  amountDue       Float
+  currency        String        @default("MAD")
+  paymentTerms    String?
+  notes           String?
+  notesAr         String?
+  pdfUrl          String?
+  lines           InvoiceLine[]
+  payments        Payment[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([farmId])
+  @@index([status])
+  @@index([type])
+  @@index([date])
+}
+
+model InvoiceLine {
+  id            String  @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description   String
+  descriptionAr String?
+  quantity      Float
+  unit          UnitType
+  unitPrice     Float
+  tvaRate       TvaRate @default(TVA_0)
+  tvaAmount     Float   @default(0)
+  total         Float
+  sortOrder     Int     @default(0)
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  invoiceId String
+  invoice   Invoice       @relation(fields: [invoiceId], references: [id])
+  amount    Float
+  date      DateTime
+  method    PaymentMethod
+  reference String?
+  bankName  String?
+  chequeDate DateTime?
+  notes     String?
+  createdAt DateTime      @default(now())
+
+  @@index([invoiceId])
+  @@index([date])
+}
+
+model Transaction {
+  id            String          @id @default(cuid())
+  type          TransactionType
+  category      ExpenseCategory
+  amount        Float
+  date          DateTime
+  description   String
+  descriptionAr String?
+  reference     String?
+  accountId     String
+  account       BankAccount     @relation(fields: [accountId], references: [id])
+  invoiceId     String?
+  isReconciled  Boolean         @default(false)
+  createdBy     String
+  createdAt     DateTime        @default(now())
+
+  @@index([accountId])
+  @@index([date])
+  @@index([type])
+  @@index([category])
+}
+
+model Client {
+  id           String    @id @default(cuid())
+  name         String
+  nameAr       String?
+  type         String
+  ice          String?
+  contact      String?
+  phone        String?
+  email        String?
+  address      String?
+  city         String?
+  country      String    @default("Maroc")
+  paymentTerms String?
+  creditLimit  Float?
+  rating       Int?
+  farmId       String
+  farm         Farm      @relation(fields: [farmId], references: [id])
+  invoices     Invoice[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([farmId])
+}
+
+model Employee {
+  id               String       @id @default(cuid())
+  cin              String       @unique
+  firstName        String
+  lastName         String
+  firstNameAr      String?
+  lastNameAr       String?
+  phone            String
+  phone2           String?
+  address          String?
+  city             String?
+  birthDate        DateTime?
+  photoUrl         String?
+  type             EmployeeType
+  role             WorkerRole
+  dailyRate        Float
+  monthlyRate      Float?
+  cnssNumber       String?
+  amoNumber        String?
+  bankRib          String?
+  hireDate         DateTime
+  endDate          DateTime?
+  contractType     String?
+  isActive         Boolean      @default(true)
+  emergencyContact String?
+  emergencyPhone   String?
+  skills           String[]
+  farmId           String
+  farm             Farm         @relation(fields: [farmId], references: [id])
+  attendances      Attendance[]
+  payslips         Payslip[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([farmId])
+  @@index([type])
+  @@index([isActive])
+}
+
+model Attendance {
+  id           String           @id @default(cuid())
+  employeeId   String
+  employee     Employee         @relation(fields: [employeeId], references: [id])
+  date         DateTime
+  checkIn      DateTime?
+  checkOut     DateTime?
+  hoursWorked  Float            @default(8)
+  overtime     Float            @default(0)
+  parcelName   String?
+  activityType String?
+  status       AttendanceStatus @default(PRESENT)
+  qrScanned    Boolean          @default(false)
+  gpsLat       Float?
+  gpsLng       Float?
+  notes        String?
+  createdAt    DateTime         @default(now())
+
+  @@unique([employeeId, date])
+  @@index([employeeId])
+  @@index([date])
+}
+
+model Payslip {
+  id            String         @id @default(cuid())
+  employeeId    String
+  employee      Employee       @relation(fields: [employeeId], references: [id])
+  month         Int
+  year          Int
+  daysWorked    Int
+  overtimeHours Float          @default(0)
+  baseSalary    Float
+  overtimePay   Float          @default(0)
+  bonuses       Float          @default(0)
+  deductions    Float          @default(0)
+  cnssEmployee  Float          @default(0)
+  cnssEmployer  Float          @default(0)
+  amoEmployee   Float          @default(0)
+  amoEmployer   Float          @default(0)
+  irAmount      Float          @default(0)
+  netSalary     Float
+  isPaid        Boolean        @default(false)
+  paymentDate   DateTime?
+  paymentMethod PaymentMethod?
+  pdfUrl        String?
+  createdAt     DateTime       @default(now())
+
+  @@unique([employeeId, month, year])
+  @@index([employeeId])
+  @@index([year, month])
+}
+
+model Certification {
+  id                String            @id @default(cuid())
+  farmId            String
+  farm              Farm              @relation(fields: [farmId], references: [id])
+  type              CertificationType
+  certificateNumber String?
+  issuedBy          String?
+  issueDate         DateTime?
+  expiryDate        DateTime?
+  status            String            @default("active")
+  documentUrl       String?
+  audits            Audit[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([farmId])
+  @@index([type])
+}
+
+model Audit {
+  id                String        @id @default(cuid())
+  certificationId   String
+  certification     Certification @relation(fields: [certificationId], references: [id])
+  date              DateTime
+  auditor           String
+  result            String
+  score             Float?
+  findings          Json?
+  correctiveActions Json?
+  reportUrl         String?
+  createdAt         DateTime      @default(now())
+
+  @@index([certificationId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  oldData   Json?
+  newData   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  titleAr   String?
+  message   String
+  messageAr String?
+  type      String
+  isRead    Boolean  @default(false)
+  actionUrl String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  tenantId  String
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+}
+
+model MarketPrice {
+  id        String   @id @default(cuid())
+  cropType  CropType
+  region    Region
+  price     Float
+  unit      UnitType @default(KG)
+  market    String
+  date      DateTime
+  source    String?
+  createdAt DateTime @default(now())
+
+  @@index([cropType, region, date])
+}
+
+model AgentConversation {
+  id             String   @id @default(cuid())
+  conversationId String   @unique
+  userId         String
+  farmId         String
+  messages       Json
+  context        Json?
+  lastAgentId    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+  @@index([farmId])
+}
