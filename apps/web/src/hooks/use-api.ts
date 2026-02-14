@@ -30,7 +30,7 @@ type FarmBudgetStatus = {
 } & ApiEntity;
 type FarmRecord = {
   id: string;
-  _id?: string;
+  _id: string;
   name?: string;
   totalArea?: number;
   area?: number;
