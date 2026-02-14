@@ -1,0 +1,10 @@
+# Global ownership
+* @LhajReda
+
+# Domain ownership
+/apps/api/ @LhajReda
+/apps/web/ @LhajReda
+/apps/mobile/ @LhajReda
+/packages/ @LhajReda
+/docker/ @LhajReda
+/docs/ @LhajReda

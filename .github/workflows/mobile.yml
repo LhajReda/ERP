@@ -2,13 +2,13 @@ name: Mobile
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "apps/mobile/**"
       - "packages/shared/**"
       - "pnpm-lock.yaml"
   pull_request:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "apps/mobile/**"
       - "packages/shared/**"
@@ -54,7 +54,7 @@ jobs:
     name: EAS Build
     needs: lint-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
     strategy:
       matrix:
@@ -92,7 +92,7 @@ jobs:
     name: EAS Update (OTA)
     needs: lint-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
     steps:
       - name: Checkout repository
