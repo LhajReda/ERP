@@ -23,16 +23,16 @@ export const getErrorMessage = (
   const direct = stringifyMessage(error);
   if (direct) return direct;
 
-  if (error instanceof Error && error.message.trim()) {
-    return error.message;
-  }
-
   if (typeof error === 'object' && error !== null) {
     const e = error as AxiosLikeError;
     const apiMessage = stringifyMessage(e.response?.data?.message);
     if (apiMessage) return apiMessage;
     const genericMessage = stringifyMessage(e.message);
     if (genericMessage) return genericMessage;
+  }
+
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
   }
 
   return fallback;

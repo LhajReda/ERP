@@ -4,13 +4,8 @@
 Move from permissive linting to strict typing rules without blocking delivery.
 
 ## Current Strategy
-- Keep global `@typescript-eslint/no-explicit-any` disabled temporarily.
-- Enforce `no-explicit-any` on a strict pilot scope first:
-  - `src/lib/api.ts`
-  - `src/i18n/request.ts`
-  - `src/components/ui/input.tsx`
-  - `src/components/ui/select.tsx`
-  - `src/components/ui/textarea.tsx`
+- Global `@typescript-eslint/no-explicit-any` is now enforced as `error` for all web files.
+- Keep phase-specific strict commands as fast regression checks for key surfaces:
 - Pilot command:
   - `pnpm --filter web lint:strict:pilot`
 - Hooks strict command:
@@ -35,11 +30,10 @@ Move from permissive linting to strict typing rules without blocking delivery.
 - Migrate dashboard pages module-by-module (`farms`, `parcels`, `sales`, etc.).
 - Enable strict rule per folder after each module is clean.
 
-4. **Phase D (In progress): Full Strict Mode**
-- Expand strict scope around shell/auth surfaces (`src/app/[locale]/(auth)/**`, `src/components/layout/header.tsx`).
-- Turn on global `@typescript-eslint/no-explicit-any` as `warn`.
-- Burn down remaining warnings to zero.
-- Switch global rule to `error`.
+4. **Phase D (Completed): Full Strict Mode**
+- Expanded strict scope around shell/auth surfaces (`src/app/[locale]/(auth)/**`, `src/components/layout/header.tsx`).
+- Turned on global `@typescript-eslint/no-explicit-any` as `error`.
+- Burned down remaining warnings to zero in `apps/web/src`.
 
 ## Quality Gates
 - Required on each phase:
