@@ -62,7 +62,11 @@ export class AuthService {
       return null;
     }
 
-    const { passwordHash, twoFactorSecret, ...result } = user;
+    const {
+      passwordHash: _passwordHash,
+      twoFactorSecret: _twoFactorSecret,
+      ...result
+    } = user;
     return result;
   }
 

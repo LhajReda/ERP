@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseAgent, AgentContext } from './base-agent';
+import { BaseAgent } from './base-agent';
 
 @Injectable()
 export class AgentRegistry {
