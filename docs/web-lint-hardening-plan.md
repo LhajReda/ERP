@@ -15,6 +15,8 @@ Move from permissive linting to strict typing rules without blocking delivery.
   - `pnpm --filter web lint:strict:pilot`
 - Hooks strict command:
   - `pnpm --filter web lint:strict:hooks`
+- Auth/Layout strict command:
+  - `pnpm --filter web lint:strict:auth-layout`
 - Dashboard strict command:
   - `pnpm --filter web lint:strict:dashboard`
 
@@ -29,11 +31,12 @@ Move from permissive linting to strict typing rules without blocking delivery.
 - Add lightweight response/request types for shared API shapes.
 - Enforce `no-explicit-any` on `src/hooks/**/*.ts`.
 
-3. **Phase C (In progress): Dashboard Pages**
+3. **Phase C (Completed): Dashboard Pages**
 - Migrate dashboard pages module-by-module (`farms`, `parcels`, `sales`, etc.).
 - Enable strict rule per folder after each module is clean.
 
-4. **Phase D: Full Strict Mode**
+4. **Phase D (In progress): Full Strict Mode**
+- Expand strict scope around shell/auth surfaces (`src/app/[locale]/(auth)/**`, `src/components/layout/header.tsx`).
 - Turn on global `@typescript-eslint/no-explicit-any` as `warn`.
 - Burn down remaining warnings to zero.
 - Switch global rule to `error`.
@@ -43,6 +46,7 @@ Move from permissive linting to strict typing rules without blocking delivery.
   - `pnpm --filter web lint`
   - `pnpm --filter web lint:strict:pilot` (or phase-specific strict command)
   - `pnpm --filter web lint:strict:hooks`
+  - `pnpm --filter web lint:strict:auth-layout`
   - `pnpm --filter web lint:strict:dashboard`
   - `pnpm --filter web build`
   - `pnpm --filter web test:e2e`

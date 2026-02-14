@@ -21,10 +21,24 @@ const languages = [
   { code: 'dar', label: 'Darija', flag: 'DA' },
 ];
 
+type NotificationItem = {
+  id?: string;
+  _id?: string;
+  read?: boolean;
+  message?: string;
+  title?: string;
+  createdAt?: string;
+  type?: 'warning' | 'error' | 'success' | 'info';
+};
+
+const isNotificationItem = (value: unknown): value is NotificationItem =>
+  typeof value === 'object' && value !== null;
+
 export default function Header() {
   const tc = useTranslations('common');
   const router = useRouter();
-  const { locale } = useParams();
+  const params = useParams<{ locale?: string | string[] }>();
+  const locale = Array.isArray(params.locale) ? params.locale[0] : (params.locale ?? 'fr');
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -33,13 +47,15 @@ export default function Header() {
   const { data: notifications, isLoading: notificationsLoading } = useNotifications();
   const { data: unreadCountData } = useUnreadCount();
   const markAsRead = useMarkAsRead();
+  const normalizedNotifications = (notifications ?? []).filter(isNotificationItem);
 
   const currentLang = languages.find((l) => l.code === locale) || languages[0];
   const unreadCount = unreadCountData?.count || unreadCountData?.unreadCount || 0;
 
-  const handleNotificationClick = (notif: any) => {
-    if (!notif.read && notif.id) {
-      markAsRead.mutate(notif.id || notif._id);
+  const handleNotificationClick = (notif: NotificationItem) => {
+    const notificationId = notif.id || notif._id;
+    if (!notif.read && notificationId) {
+      markAsRead.mutate(notificationId);
     }
   };
 
@@ -152,8 +168,8 @@ export default function Header() {
                 <div className="p-4 text-center text-sm text-muted-foreground">
                   Chargement...
                 </div>
-              ) : notifications && notifications.length > 0 ? (
-                notifications.slice(0, 5).map((n: any) => (
+              ) : normalizedNotifications.length > 0 ? (
+                normalizedNotifications.slice(0, 5).map((n) => (
                   <div
                     key={n.id || n._id}
                     onClick={() => handleNotificationClick(n)}

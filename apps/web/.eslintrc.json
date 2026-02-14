@@ -21,7 +21,9 @@
         "src/components/ui/select.tsx",
         "src/components/ui/textarea.tsx",
         "src/hooks/**/*.ts",
+        "src/app/[[]locale[]]/(auth)/**/*.tsx",
         "src/app/[[]locale[]]/(dashboard)/**/*.tsx",
+        "src/components/layout/header.tsx",
         "src/components/layout/sidebar.tsx"
       ],
       "rules": {

@@ -1,34 +1,58 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/error-message';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sprout, User, Phone, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Sprout, User, Phone, Mail, Lock, Eye, EyeOff, Building2 } from 'lucide-react';
 
 export default function RegisterPage() {
   const t = useTranslations('auth');
   const router = useRouter();
   const { locale } = useParams();
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', password: '' });
+  const [tenantId, setTenantId] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const savedTenantId = localStorage.getItem('fla7a_tenant');
+    const defaultTenantId = process.env.NEXT_PUBLIC_DEFAULT_TENANT_ID || '';
+    setTenantId(savedTenantId || defaultTenantId);
+  }, []);
 
   const update = (key: string, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!tenantId.trim()) {
+      setError('Tenant ID requis. Ajoutez votre tenant avant inscription.');
+      return;
+    }
     setLoading(true);
     try {
-      await api.post('/auth/register', form);
-      router.push(`/${locale}/login`);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors de l\'inscription');
+      const res = await api.post('/auth/register', form, {
+        headers: {
+          'x-tenant-id': tenantId.trim(),
+        },
+      });
+      const payload = res.data?.data ?? res.data;
+      if (payload?.user) {
+        localStorage.setItem('fla7a_user', JSON.stringify(payload.user));
+        if (payload.user.tenantId) {
+          localStorage.setItem('fla7a_tenant', payload.user.tenantId);
+        }
+      }
+      router.push(`/${locale}/dashboard`);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Erreur lors de l\'inscription'));
     } finally {
       setLoading(false);
     }
@@ -88,6 +112,16 @@ export default function RegisterPage() {
               <Input label={t('firstName')} value={form.firstName} onChange={(e) => update('firstName', e.target.value)} leftIcon={<User className="h-4 w-4" />} required />
               <Input label={t('lastName')} value={form.lastName} onChange={(e) => update('lastName', e.target.value)} required />
             </div>
+
+            <Input
+              label="Tenant ID"
+              value={tenantId}
+              onChange={(e) => setTenantId(e.target.value)}
+              placeholder="ex: cm4abcxyz0001..."
+              leftIcon={<Building2 className="h-4 w-4" />}
+              helperText="Demandez ce code a votre administrateur FLA7A."
+              required
+            />
 
             <Input label={t('phone')} type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="+212612345678" leftIcon={<Phone className="h-4 w-4" />} required />
 

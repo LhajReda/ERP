@@ -1,38 +1,80 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/error-message';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sprout, Phone, Lock, Eye, EyeOff, Leaf, Sun, Droplets, BarChart3 } from 'lucide-react';
+import {
+  Sprout,
+  Phone,
+  Lock,
+  Eye,
+  EyeOff,
+  Leaf,
+  Sun,
+  Droplets,
+  BarChart3,
+  Building2,
+  Sparkles,
+} from 'lucide-react';
 
 export default function LoginPage() {
   const t = useTranslations('auth');
-  const tc = useTranslations('common');
   const router = useRouter();
   const { locale } = useParams();
   const [identifier, setIdentifier] = useState('');
+  const [tenantHint, setTenantHint] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const savedTenantHint = localStorage.getItem('fla7a_tenant_hint');
+    if (savedTenantHint) {
+      setTenantHint(savedTenantHint);
+    }
+  }, []);
+
+  const useDemoEnterpriseAccess = () => {
+    setIdentifier('+212699999991');
+    setPassword('Fla7a@2025');
+    setTenantHint('e2e-auth');
+    setError('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const res = await api.post('/auth/login', { phone: identifier, password });
-      localStorage.setItem('fla7a_token', res.data.data.accessToken);
-      localStorage.setItem('fla7a_refresh', res.data.data.refreshToken);
-      localStorage.setItem('fla7a_tenant', res.data.data.user.tenantId);
-      localStorage.setItem('fla7a_user', JSON.stringify(res.data.data.user));
+      const cleanIdentifier = identifier.trim();
+      const cleanTenantHint = tenantHint.trim();
+      const res = await api.post(
+        '/auth/login',
+        { phone: cleanIdentifier, password },
+        cleanTenantHint
+          ? { headers: { 'x-tenant-id': cleanTenantHint } }
+          : undefined,
+      );
+      const payload = res.data?.data ?? res.data;
+      if (cleanTenantHint) {
+        localStorage.setItem('fla7a_tenant_hint', cleanTenantHint);
+      }
+      if (payload?.user?.tenantId) {
+        localStorage.setItem('fla7a_tenant', payload.user.tenantId);
+      }
+      if (payload?.user) {
+        localStorage.setItem('fla7a_user', JSON.stringify(payload.user));
+      }
       router.push(`/${locale}/dashboard`);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur de connexion');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Erreur de connexion'));
     } finally {
       setLoading(false);
     }
@@ -134,12 +176,42 @@ export default function LoginPage() {
             <p className="text-muted-foreground">Entrez vos identifiants pour acceder a votre espace</p>
           </div>
 
+          <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Acces demo enterprise</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Utilise un compte de test preconfigure pour verifier rapidement les modules.
+                </p>
+              </div>
+              <BadgePill />
+            </div>
+            <button
+              type="button"
+              onClick={useDemoEnterpriseAccess}
+              className="mt-3 inline-flex items-center gap-2 rounded-lg border border-primary/25 bg-card px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/5"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Remplir avec le compte demo
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm font-medium animate-in">
                 {error}
               </div>
             )}
+
+            <Input
+              label="Tenant (optionnel)"
+              type="text"
+              value={tenantHint}
+              onChange={(e) => setTenantHint(e.target.value)}
+              placeholder="ex: e2e-auth ou id tenant"
+              helperText="Utile si votre organisation utilise un tenant dedie."
+              leftIcon={<Building2 className="h-4 w-4" />}
+            />
 
             <Input
               label={t('phone')}
@@ -187,7 +259,7 @@ export default function LoginPage() {
               loading={loading}
               className="w-full"
             >
-              {t('login')}
+              {loading ? 'Connexion...' : t('login')}
             </Button>
           </form>
 
@@ -199,6 +271,15 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+function BadgePill() {
+  return (
+    <div className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+      <Sparkles className="h-3 w-3" />
+      Demo
     </div>
   );
 }
