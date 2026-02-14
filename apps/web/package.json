@@ -9,6 +9,7 @@
     "lint": "next lint",
     "lint:strict:pilot": "eslint \"src/lib/api.ts\" \"src/i18n/request.ts\" \"src/components/ui/input.tsx\" \"src/components/ui/select.tsx\" \"src/components/ui/textarea.tsx\" --max-warnings=0",
     "lint:strict:hooks": "eslint \"src/hooks/**/*.ts\" --max-warnings=0",
+    "lint:strict:dashboard": "eslint \"src/app/[[]locale[]]/(dashboard)/**/*.tsx\" \"src/components/layout/sidebar.tsx\" --max-warnings=0",
     "test:e2e": "pnpm --filter @fla7a/database exec ts-node prisma/seed-auth-e2e.ts && playwright test"
   },
   "dependencies": {

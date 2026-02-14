@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useCultureCycles, useCreateCultureCycle, useParcels } from '@/hooks/use-api';
+import { getErrorMessage } from '@/lib/error-message';
 import { Plus, Sprout, Calendar, MapPin } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; variant: 'success' | 'info' | 'warning' | 'default' }> = {
@@ -19,6 +20,24 @@ const statusConfig: Record<string, { label: string; variant: 'success' | 'info' 
   GROWING: { label: 'Croissance', variant: 'info' },
   SOWING: { label: 'Semis', variant: 'warning' },
   PLANNING: { label: 'Planifié', variant: 'default' },
+};
+
+type CultureCycleRow = {
+  id?: string;
+  _id?: string;
+  status?: string;
+  progress?: number;
+  cropType?: string;
+  parcelName?: string;
+  parcelId?: string;
+  area?: number;
+  startDate?: string;
+};
+
+type ParcelOption = {
+  id?: string;
+  _id?: string;
+  name?: string;
 };
 
 export default function CulturePage() {
@@ -41,6 +60,8 @@ export default function CulturePage() {
 
   const { data: cycles, isLoading } = useCultureCycles(activeFarmId || undefined);
   const { data: parcels } = useParcels(activeFarmId || undefined);
+  const parcelList = Array.isArray(parcels) ? (parcels as ParcelOption[]) : [];
+  const cycleRows = Array.isArray(cycles) ? (cycles as CultureCycleRow[]) : [];
   const createCycle = useCreateCultureCycle();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,8 +78,8 @@ export default function CulturePage() {
       setDialogOpen(false);
       setFormData({ cropType: '', parcelId: '', startDate: '', expectedEndDate: '', plantingDensity: '' });
       alert('Cycle créé avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -68,7 +89,7 @@ export default function CulturePage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {isLoading ? '...' : `${cycles?.length || 0} cycles actifs`}
+            {isLoading ? '...' : `${cycleRows.length} cycles actifs`}
           </p>
         </div>
         <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
@@ -86,20 +107,19 @@ export default function CulturePage() {
             </Card>
           ))}
         </div>
-      ) : cycles && cycles.length === 0 ? (
+      ) : cycleRows.length === 0 ? (
         <EmptyState
           icon={Sprout}
           title="Aucun cycle"
           description="Commencez par créer un cycle de culture"
-          action={
-            <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
-              Créer un cycle
-            </Button>
-          }
+          action={{
+            label: 'Creer un cycle',
+            onClick: () => setDialogOpen(true),
+          }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cycles?.map((cycle: any) => {
+          {cycleRows.map((cycle: CultureCycleRow) => {
             const status = cycle.status || 'PLANNING';
             const st = statusConfig[status] || statusConfig.PLANNING;
             const progress = cycle.progress || 0;
@@ -178,7 +198,7 @@ export default function CulturePage() {
                 required
               >
                 <option value="">Sélectionner une parcelle</option>
-                {parcels?.map((p: any) => (
+                {parcelList.map((p: ParcelOption) => (
                   <option key={p.id || p._id} value={p.id || p._id}>
                     {p.name}
                   </option>

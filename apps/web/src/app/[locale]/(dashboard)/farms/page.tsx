@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import {
@@ -18,19 +17,28 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useFarms, useCreateFarm, useDeleteFarm } from '@/hooks/use-api';
+import { getErrorMessage } from '@/lib/error-message';
 import {
   Plus,
   Tractor,
   MapPin,
-  Sprout,
-  Users,
   LayoutGrid,
   List,
   Search,
-  MoreVertical,
-  ChevronRight,
   Trash2,
 } from 'lucide-react';
+
+type FarmRow = {
+  id?: string;
+  _id?: string;
+  name?: string;
+  region?: string;
+  province?: string;
+  area?: number;
+  parcels?: number;
+  activeCycles?: number;
+  iceNumber?: string;
+};
 
 export default function FarmsPage() {
   const t = useTranslations('farm');
@@ -47,14 +55,15 @@ export default function FarmsPage() {
     iceNumber: '',
   });
 
-  const { data: farms, isLoading, error } = useFarms();
+  const { data: farms, isLoading } = useFarms();
   const createFarm = useCreateFarm();
   const deleteFarm = useDeleteFarm();
+  const farmRows = Array.isArray(farms) ? (farms as FarmRow[]) : [];
 
-  const filtered = farms?.filter((f: any) =>
+  const filtered = farmRows.filter((f: FarmRow) =>
     f.name?.toLowerCase().includes(search.toLowerCase()) ||
     f.region?.toLowerCase().includes(search.toLowerCase())
-  ) || [];
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,8 +78,8 @@ export default function FarmsPage() {
       setDialogOpen(false);
       setFormData({ name: '', region: '', province: '', area: '', iceNumber: '' });
       alert('Ferme créée avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -81,8 +90,8 @@ export default function FarmsPage() {
       setDeleteDialogOpen(false);
       setSelectedFarmId(null);
       alert('Ferme supprimée avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -93,7 +102,7 @@ export default function FarmsPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {isLoading ? '...' : `${farms?.length || 0} fermes - ${farms?.reduce((sum: number, f: any) => sum + (f.area || 0), 0) || 0} hectares total`}
+            {isLoading ? '...' : `${farmRows.length} fermes - ${farmRows.reduce((sum: number, f: FarmRow) => sum + (f.area || 0), 0)} hectares total`}
           </p>
         </div>
         <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
@@ -143,11 +152,14 @@ export default function FarmsPage() {
           icon={Tractor}
           title="Aucune ferme"
           description="Commencez par ajouter votre première ferme"
-          action={<Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>Ajouter une ferme</Button>}
+          action={{
+            label: 'Ajouter une ferme',
+            onClick: () => setDialogOpen(true),
+          }}
         />
       ) : (
         <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-3'}>
-          {filtered.map((farm: any) => (
+          {filtered.map((farm: FarmRow) => (
             <Card key={farm.id || farm._id} className="cursor-pointer group">
               <CardContent className="p-5">
                 {/* Header */}
@@ -167,7 +179,9 @@ export default function FarmsPage() {
                   </div>
                   <button
                     onClick={() => {
-                      setSelectedFarmId(farm.id || farm._id);
+                      const farmId = farm.id || farm._id;
+                      if (!farmId) return;
+                      setSelectedFarmId(farmId);
                       setDeleteDialogOpen(true);
                     }}
                     className="p-1 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"

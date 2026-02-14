@@ -11,7 +11,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useCertifications, useCreateCertification } from '@/hooks/use-api';
-import { Plus, ShieldCheck, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { getErrorMessage } from '@/lib/error-message';
+import { Plus, ShieldCheck } from 'lucide-react';
+
+type CertificationRow = {
+  id?: string;
+  _id?: string;
+  name?: string;
+  type?: string;
+  issuedBy?: string;
+  issueDate?: string;
+  expiryDate?: string;
+};
 
 export default function CompliancePage() {
   const t = useTranslations('compliance');
@@ -33,6 +44,9 @@ export default function CompliancePage() {
 
   const { data: certifications, isLoading } = useCertifications(activeFarmId || undefined);
   const createCertification = useCreateCertification();
+  const certificationRows = Array.isArray(certifications)
+    ? (certifications as CertificationRow[])
+    : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,12 +62,12 @@ export default function CompliancePage() {
       setDialogOpen(false);
       setFormData({ name: '', type: 'ORGANIC', issueDate: '', expiryDate: '', issuedBy: '' });
       alert('Certification créée avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
-  const getStatusBadge = (cert: any) => {
+  const getStatusBadge = (cert: CertificationRow) => {
     if (!cert.expiryDate) return <Badge variant="success" dot>Active</Badge>;
     const expiryDate = new Date(cert.expiryDate);
     const now = new Date();
@@ -92,20 +106,19 @@ export default function CompliancePage() {
             </Card>
           ))}
         </div>
-      ) : certifications && certifications.length === 0 ? (
+      ) : certificationRows.length === 0 ? (
         <EmptyState
           icon={ShieldCheck}
           title="Aucune certification"
           description="Commencez par ajouter des certifications"
-          action={
-            <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
-              Ajouter une certification
-            </Button>
-          }
+          action={{
+            label: 'Ajouter une certification',
+            onClick: () => setDialogOpen(true),
+          }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {certifications?.map((cert: any) => (
+          {certificationRows.map((cert: CertificationRow) => (
             <Card key={cert.id || cert._id} className="cursor-pointer group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">

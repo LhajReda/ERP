@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -20,17 +20,29 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useProducts, useCreateProduct, useCreateStockMovement, useLowStockAlerts } from '@/hooks/use-api';
+import { getErrorMessage } from '@/lib/error-message';
 import {
   Plus,
   Package,
   Search,
   ArrowDownCircle,
-  ArrowUpCircle,
   AlertTriangle,
-  Filter,
 } from 'lucide-react';
 
 const categories = ['Tous', 'ENGRAIS', 'PHYTOSANITAIRE', 'SEMENCE', 'MATERIEL', 'AUTRE'];
+
+type ProductRow = {
+  id?: string;
+  _id?: string;
+  name?: string;
+  category?: string;
+  currentStock?: number;
+  stock?: number;
+  minStock?: number;
+  min?: number;
+  unit?: string;
+  price?: number;
+};
 
 export default function StockPage() {
   const t = useTranslations('stock');
@@ -67,14 +79,16 @@ export default function StockPage() {
   const { data: lowStockAlerts } = useLowStockAlerts(activeFarmId || undefined);
   const createProduct = useCreateProduct();
   const createMovement = useCreateStockMovement();
+  const productRows = Array.isArray(products) ? (products as ProductRow[]) : [];
+  const lowStockRows = Array.isArray(lowStockAlerts) ? lowStockAlerts : [];
 
-  const filtered = products?.filter((p: any) => {
+  const filtered = productRows.filter((p: ProductRow) => {
     const matchSearch = p.name?.toLowerCase().includes(search.toLowerCase());
     const matchCat = category === 'Tous' || p.category === category;
     return matchSearch && matchCat;
-  }) || [];
+  });
 
-  const lowStockCount = lowStockAlerts?.length || 0;
+  const lowStockCount = lowStockRows.length;
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,8 +105,8 @@ export default function StockPage() {
       setProductDialogOpen(false);
       setProductForm({ name: '', category: 'ENGRAIS', currentStock: '', unit: 'kg', minStock: '', price: '' });
       alert('Produit créé avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -108,8 +122,8 @@ export default function StockPage() {
       setMovementDialogOpen(false);
       setMovementForm({ productId: '', type: 'IN', quantity: '', notes: '' });
       alert('Mouvement enregistré avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -120,7 +134,7 @@ export default function StockPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {isLoading ? '...' : `${products?.length || 0} produits - ${lowStockCount} alertes stock`}
+            {isLoading ? '...' : `${productRows.length} produits - ${lowStockCount} alertes stock`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -156,7 +170,7 @@ export default function StockPage() {
 
       <Tabs defaultValue="products">
         <TabsList>
-          <TabsTrigger value="products">Produits ({products?.length || 0})</TabsTrigger>
+          <TabsTrigger value="products">Produits ({productRows.length})</TabsTrigger>
           <TabsTrigger value="movements">Mouvements</TabsTrigger>
         </TabsList>
 
@@ -198,15 +212,10 @@ export default function StockPage() {
               icon={Package}
               title="Aucun produit"
               description="Commencez par ajouter des produits à votre inventaire"
-              action={
-                <Button
-                  variant="success"
-                  leftIcon={<Plus className="h-4 w-4" />}
-                  onClick={() => setProductDialogOpen(true)}
-                >
-                  Ajouter un produit
-                </Button>
-              }
+              action={{
+                label: 'Ajouter un produit',
+                onClick: () => setProductDialogOpen(true),
+              }}
             />
           ) : (
             <Card hover={false}>
@@ -223,7 +232,7 @@ export default function StockPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((p: any) => {
+                    {filtered.map((p: ProductRow) => {
                       const stock = p.currentStock || p.stock || 0;
                       const min = p.minStock || p.min || 100;
                       const level = Math.min((stock / min) * 100, 100);
@@ -376,7 +385,7 @@ export default function StockPage() {
                 required
               >
                 <option value="">Sélectionner un produit</option>
-                {products?.map((p: any) => (
+                {productRows.map((p: ProductRow) => (
                   <option key={p.id || p._id} value={p.id || p._id}>
                     {p.name}
                   </option>

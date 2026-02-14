@@ -11,7 +11,19 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useEmployees, useCreateEmployee, useAttendanceToday, useMarkAttendance } from '@/hooks/use-api';
-import { Plus, Users, UserCheck, Mail, Phone, Calendar } from 'lucide-react';
+import { getErrorMessage } from '@/lib/error-message';
+import { Plus, Users, UserCheck, Mail, Phone } from 'lucide-react';
+
+type EmployeeRow = {
+  id?: string;
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  position?: string;
+  salary?: number;
+};
 
 export default function HRPage() {
   const t = useTranslations('hr');
@@ -37,9 +49,10 @@ export default function HRPage() {
   }, []);
 
   const { data: employees, isLoading } = useEmployees(activeFarmId || undefined);
-  const { data: attendanceToday } = useAttendanceToday(activeFarmId || undefined);
+  useAttendanceToday(activeFarmId || undefined);
   const createEmployee = useCreateEmployee();
   const markAttendance = useMarkAttendance();
+  const employeeRows = Array.isArray(employees) ? (employees as EmployeeRow[]) : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,8 +70,8 @@ export default function HRPage() {
       setDialogOpen(false);
       setFormData({ firstName: '', lastName: '', email: '', phone: '', position: '', salary: '', startDate: '' });
       alert('Employé créé avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -74,8 +87,8 @@ export default function HRPage() {
       setAttendanceDialogOpen(false);
       setSelectedEmployeeId('');
       alert('Pointage enregistré!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -85,7 +98,7 @@ export default function HRPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {isLoading ? '...' : `${employees?.length || 0} employés`}
+            {isLoading ? '...' : `${employeeRows.length} employés`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -108,20 +121,19 @@ export default function HRPage() {
             </Card>
           ))}
         </div>
-      ) : employees && employees.length === 0 ? (
+      ) : employeeRows.length === 0 ? (
         <EmptyState
           icon={Users}
           title="Aucun employé"
           description="Commencez par ajouter des employés"
-          action={
-            <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
-              Ajouter un employé
-            </Button>
-          }
+          action={{
+            label: 'Ajouter un employe',
+            onClick: () => setDialogOpen(true),
+          }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {employees?.map((emp: any) => (
+          {employeeRows.map((emp: EmployeeRow) => (
             <Card key={emp.id || emp._id} className="cursor-pointer group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
@@ -249,7 +261,7 @@ export default function HRPage() {
               required
             >
               <option value="">Sélectionner un employé</option>
-              {employees?.map((emp: any) => (
+              {employeeRows.map((emp: EmployeeRow) => (
                 <option key={emp.id || emp._id} value={emp.id || emp._id}>
                   {emp.firstName} {emp.lastName}
                 </option>

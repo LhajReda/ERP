@@ -1,36 +1,40 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
 import { useFarms } from '@/hooks/use-api';
+import api from '@/lib/api';
 import {
   LayoutDashboard,
   Tractor,
   Map,
   Sprout,
   Package,
+  ClipboardList,
   Banknote,
   Users,
   ShoppingCart,
   ShieldCheck,
   Settings,
+  Command,
   Bot,
   ChevronLeft,
   ChevronRight,
   LogOut,
-  ChevronDown,
 } from 'lucide-react';
 
 const navItems = [
   { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { key: 'commandCenter', href: '/command-center', icon: Command },
   { key: 'farms', href: '/farms', icon: Tractor },
   { key: 'parcels', href: '/parcels', icon: Map },
   { key: 'culture', href: '/culture', icon: Sprout },
   { key: 'stock', href: '/stock', icon: Package },
+  { key: 'procurement', href: '/procurement', icon: ClipboardList },
   { key: 'finance', href: '/finance', icon: Banknote },
   { key: 'hr', href: '/hr', icon: Users },
   { key: 'sales', href: '/sales', icon: ShoppingCart },
@@ -38,13 +42,26 @@ const navItems = [
   { key: 'settings', href: '/settings', icon: Settings },
 ];
 
+type FarmOption = {
+  id: string;
+  _id: string;
+  name?: string;
+};
+
 export default function Sidebar() {
   const t = useTranslations('nav');
   const { locale } = useParams();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [activeFarmId, setActiveFarmId] = useState<string | null>(null);
-  const { data: farms, isLoading: farmsLoading } = useFarms();
+  const [userDisplayName, setUserDisplayName] = useState('Utilisateur');
+  const [userRoleLabel, setUserRoleLabel] = useState('Utilisateur');
+  const [userInitials, setUserInitials] = useState('US');
+  const { data: farms } = useFarms();
+  const farmRows = useMemo(
+    () => (Array.isArray(farms) ? (farms as FarmOption[]) : []),
+    [farms],
+  );
 
   useEffect(() => {
     // Load active farm from localStorage on mount
@@ -53,21 +70,61 @@ export default function Sidebar() {
       setActiveFarmId(savedFarmId);
 
       // If no farm is selected but farms are available, select the first one
-      if (!savedFarmId && farms && farms.length > 0) {
-        const firstFarmId = farms[0].id || farms[0]._id;
+      if (!savedFarmId && farmRows.length > 0) {
+        const firstFarmId = farmRows[0].id || farmRows[0]._id;
         localStorage.setItem('fla7a_farm', firstFarmId);
         setActiveFarmId(firstFarmId);
       }
     }
-  }, [farms]);
+  }, [farmRows]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const rawUser = localStorage.getItem('fla7a_user');
+    if (!rawUser) return;
+
+    try {
+      const user = JSON.parse(rawUser) as {
+        firstName?: string;
+        lastName?: string;
+        name?: string;
+        role?: string;
+      };
+      const fullName =
+        [user.firstName, user.lastName].filter(Boolean).join(' ') ||
+        user.name ||
+        'Utilisateur';
+      const initials = fullName
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase())
+        .join('');
+
+      setUserDisplayName(fullName);
+      setUserInitials(initials || 'US');
+      setUserRoleLabel(
+        user.role
+          ? user.role
+              .toLowerCase()
+              .split('_')
+              .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+              .join(' ')
+          : 'Utilisateur',
+      );
+    } catch {
+      setUserDisplayName('Utilisateur');
+      setUserRoleLabel('Utilisateur');
+      setUserInitials('US');
+    }
+  }, []);
 
   const handleFarmChange = (farmId: string) => {
     localStorage.setItem('fla7a_farm', farmId);
     setActiveFarmId(farmId);
     window.location.reload(); // Reload to refresh data for the new farm
   };
-
-  const activeFarm = farms?.find((f: any) => (f.id || f._id) === activeFarmId);
 
   const isActive = (href: string) => pathname === `/${locale}${href}`;
 
@@ -94,14 +151,14 @@ export default function Sidebar() {
       </div>
 
       {/* Farm Selector */}
-      {!collapsed && farms && farms.length > 0 && (
+      {!collapsed && farmRows.length > 0 && (
         <div className="px-3 py-3 border-b">
           <select
             value={activeFarmId || ''}
             onChange={(e) => handleFarmChange(e.target.value)}
             className="w-full h-10 px-3 py-2 text-sm rounded-lg border border-border bg-card hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary transition-all"
           >
-            {farms.map((farm: any) => (
+            {farmRows.map((farm: FarmOption) => (
               <option key={farm.id || farm._id} value={farm.id || farm._id}>
                 {farm.name}
               </option>
@@ -154,17 +211,24 @@ export default function Sidebar() {
       {/* User section */}
       <div className="border-t p-3">
         <div className={cn('flex items-center gap-3', collapsed && 'justify-center')}>
-          <Avatar initials="ME" size="sm" />
+          <Avatar initials={userInitials} size="sm" />
           {!collapsed && (
             <div className="flex-1 min-w-0 animate-fade-in">
-              <p className="text-sm font-medium truncate">Mohammed El Fassi</p>
-              <p className="text-[10px] text-muted-foreground">Admin</p>
+              <p className="text-sm font-medium truncate">{userDisplayName}</p>
+              <p className="text-[10px] text-muted-foreground">{userRoleLabel}</p>
             </div>
           )}
           {!collapsed && (
             <button
-              onClick={() => {
-                localStorage.removeItem('fla7a_token');
+              onClick={async () => {
+                try {
+                  await api.post('/auth/logout');
+                } catch {
+                  // Continue with local cleanup even if the API logout fails.
+                }
+                localStorage.removeItem('fla7a_user');
+                localStorage.removeItem('fla7a_tenant');
+                localStorage.removeItem('fla7a_farm');
                 window.location.href = `/${locale}/login`;
               }}
               className="p-1.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-destructive transition-colors"

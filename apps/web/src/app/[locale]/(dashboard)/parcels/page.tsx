@@ -11,7 +11,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useParcels, useCreateParcel } from '@/hooks/use-api';
-import { Plus, Map, MapPin, Trash2 } from 'lucide-react';
+import { getErrorMessage } from '@/lib/error-message';
+import { Plus, Map, MapPin } from 'lucide-react';
+
+type ParcelRow = {
+  id?: string;
+  _id?: string;
+  name?: string;
+  area?: number;
+  soilType?: string;
+  irrigationType?: string;
+};
 
 export default function ParcelsPage() {
   const t = useTranslations('parcel');
@@ -32,6 +42,7 @@ export default function ParcelsPage() {
 
   const { data: parcels, isLoading } = useParcels(activeFarmId || undefined);
   const createParcel = useCreateParcel();
+  const parcelRows = Array.isArray(parcels) ? (parcels as ParcelRow[]) : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,12 +57,12 @@ export default function ParcelsPage() {
       setDialogOpen(false);
       setFormData({ name: '', area: '', soilType: '', irrigationType: '' });
       alert('Parcelle créée avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
-  const totalArea = parcels?.reduce((sum: number, p: any) => sum + (p.area || 0), 0) || 0;
+  const totalArea = parcelRows.reduce((sum: number, p: ParcelRow) => sum + (p.area || 0), 0);
 
   return (
     <div className="space-y-6 animate-in">
@@ -59,7 +70,7 @@ export default function ParcelsPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {isLoading ? '...' : `${parcels?.length || 0} parcelles - ${totalArea} ha`}
+            {isLoading ? '...' : `${parcelRows.length} parcelles - ${totalArea} ha`}
           </p>
         </div>
         <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
@@ -88,20 +99,19 @@ export default function ParcelsPage() {
             </Card>
           ))}
         </div>
-      ) : parcels && parcels.length === 0 ? (
+      ) : parcelRows.length === 0 ? (
         <EmptyState
           icon={MapPin}
           title="Aucune parcelle"
           description="Commencez par ajouter des parcelles à votre ferme"
-          action={
-            <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
-              Ajouter une parcelle
-            </Button>
-          }
+          action={{
+            label: 'Ajouter une parcelle',
+            onClick: () => setDialogOpen(true),
+          }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {parcels?.map((parcel: any) => (
+          {parcelRows.map((parcel: ParcelRow) => (
             <Card key={parcel.id || parcel._id} className="cursor-pointer group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">

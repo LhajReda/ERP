@@ -10,7 +10,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useClients, useCreateClient } from '@/hooks/use-api';
-import { Plus, ShoppingCart, Users, Mail, Phone } from 'lucide-react';
+import { getErrorMessage } from '@/lib/error-message';
+import { Plus, Users, Mail, Phone } from 'lucide-react';
+
+type ClientRow = {
+  id?: string;
+  _id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  type?: string;
+};
 
 export default function SalesPage() {
   const t = useTranslations('sales');
@@ -32,6 +43,7 @@ export default function SalesPage() {
 
   const { data: clients, isLoading } = useClients(activeFarmId || undefined);
   const createClient = useCreateClient();
+  const clientRows = Array.isArray(clients) ? (clients as ClientRow[]) : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +59,8 @@ export default function SalesPage() {
       setDialogOpen(false);
       setFormData({ name: '', email: '', phone: '', address: '', type: 'WHOLESALER' });
       alert('Client créé avec succès!');
-    } catch (error: any) {
-      alert('Erreur: ' + (error?.response?.data?.message || error.message));
+    } catch (error: unknown) {
+      alert(`Erreur: ${getErrorMessage(error)}`);
     }
   };
 
@@ -58,7 +70,7 @@ export default function SalesPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {isLoading ? '...' : `${clients?.length || 0} clients`}
+            {isLoading ? '...' : `${clientRows.length} clients`}
           </p>
         </div>
         <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
@@ -76,20 +88,19 @@ export default function SalesPage() {
             </Card>
           ))}
         </div>
-      ) : clients && clients.length === 0 ? (
+      ) : clientRows.length === 0 ? (
         <EmptyState
           icon={Users}
           title="Aucun client"
           description="Commencez par ajouter des clients"
-          action={
-            <Button variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setDialogOpen(true)}>
-              Ajouter un client
-            </Button>
-          }
+          action={{
+            label: 'Ajouter un client',
+            onClick: () => setDialogOpen(true),
+          }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {clients?.map((client: any) => (
+          {clientRows.map((client: ClientRow) => (
             <Card key={client.id || client._id} className="cursor-pointer group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
