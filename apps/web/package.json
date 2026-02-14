@@ -6,7 +6,10 @@
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:strict:pilot": "eslint \"src/lib/api.ts\" \"src/i18n/request.ts\" \"src/components/ui/input.tsx\" \"src/components/ui/select.tsx\" \"src/components/ui/textarea.tsx\" --max-warnings=0",
+    "lint:strict:hooks": "eslint \"src/hooks/**/*.ts\" --max-warnings=0",
+    "test:e2e": "pnpm --filter @fla7a/database exec ts-node prisma/seed-auth-e2e.ts && playwright test"
   },
   "dependencies": {
     "@fla7a/shared": "workspace:*",
@@ -35,10 +38,13 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.35",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.7.0"
