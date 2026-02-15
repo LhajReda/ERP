@@ -3,9 +3,11 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  StreamableFile,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { requestContext } from '../context/request-context';
 
 /**
  * Shape of the standardized API response.
@@ -15,6 +17,7 @@ export interface ApiResponse<T> {
   data: T;
   timestamp: string;
   path: string;
+  requestId: string | null;
 }
 
 /**
@@ -38,14 +41,22 @@ export class TransformInterceptor<T>
   ): Observable<ApiResponse<T>> {
     const request = context.switchToHttp().getRequest();
     const path = request.url;
+    const requestId = requestContext.getRequestId();
 
     return next.handle().pipe(
-      map((data) => ({
-        success: true,
-        data,
-        timestamp: new Date().toISOString(),
-        path,
-      })),
+      map((data) => {
+        if (data instanceof StreamableFile || Buffer.isBuffer(data)) {
+          return data as any;
+        }
+
+        return {
+          success: true,
+          data,
+          timestamp: new Date().toISOString(),
+          path,
+          requestId,
+        };
+      }),
     );
   }
 }

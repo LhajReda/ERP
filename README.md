@@ -107,6 +107,8 @@ pnpm gate:web:e2e     # Gate E2E web (release web)
 - Contribution workflow: `CONTRIBUTING.md`
 - Branch protection setup: `docs/branch-protection-checklist.md`
 - Execution roadmap: `docs/world-class-erp-plan.md`
+- SLO and error budget policy: `docs/slo-error-budget.md`
+- Incident runbooks: `docs/runbooks/incident-response.md`, `docs/runbooks/service-restore.md`
 
 ## Spécificités marocaines
 

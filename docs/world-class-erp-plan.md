@@ -34,7 +34,7 @@ Artifacts:
 - `.github/CODEOWNERS`
 - `docs/branch-protection-checklist.md`
 
-### Phase 1 - Reliability and Observability
+### Phase 1 - Reliability and Observability (In progress)
 Scope:
 - SLOs and error budgets per critical surface.
 - Structured logging with request correlation IDs.

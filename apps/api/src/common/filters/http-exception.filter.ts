@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { requestContext } from '../context/request-context';
 
 /**
  * Shape of the standardized error response.
@@ -18,6 +19,7 @@ export interface ErrorResponse {
   error: string;
   timestamp: string;
   path: string;
+  requestId: string | null;
 }
 
 /**
@@ -53,13 +55,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exceptionResponse;
       error = exception.name;
     } else if (typeof exceptionResponse === 'object') {
-      const responseObj = exceptionResponse as Record<string, any>;
-      message = responseObj.message || exception.message;
-      error = responseObj.error || exception.name;
+      const responseObj = exceptionResponse as Record<string, unknown>;
+      const rawMessage = responseObj.message;
+      const rawError = responseObj.error;
+
+      if (Array.isArray(rawMessage)) {
+        const normalizedMessages = rawMessage.filter(
+          (item): item is string => typeof item === 'string',
+        );
+        message =
+          normalizedMessages.length > 0 ? normalizedMessages : exception.message;
+      } else {
+        message =
+          typeof rawMessage === 'string' ? rawMessage : exception.message;
+      }
+      error = typeof rawError === 'string' ? rawError : exception.name;
     } else {
       message = exception.message;
       error = exception.name;
     }
+    const requestId = requestContext.getRequestId();
 
     const errorResponse: ErrorResponse = {
       success: false,
@@ -68,17 +83,34 @@ export class HttpExceptionFilter implements ExceptionFilter {
       error,
       timestamp: new Date().toISOString(),
       path: request.url,
+      requestId,
     };
 
     // Log server errors (5xx) at error level, client errors at warn level
     if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(
-        `${request.method} ${request.url} - ${statusCode}: ${JSON.stringify(message)}`,
+        JSON.stringify({
+          event: 'http_error',
+          requestId,
+          method: request.method,
+          path: request.url,
+          statusCode,
+          error,
+          message,
+        }),
         exception.stack,
       );
     } else {
       this.logger.warn(
-        `${request.method} ${request.url} - ${statusCode}: ${JSON.stringify(message)}`,
+        JSON.stringify({
+          event: 'http_error',
+          requestId,
+          method: request.method,
+          path: request.url,
+          statusCode,
+          error,
+          message,
+        }),
       );
     }
 
