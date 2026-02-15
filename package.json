@@ -8,6 +8,8 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
+    "gate": "pnpm lint && pnpm test && pnpm build",
+    "gate:web:e2e": "pnpm --filter web test:e2e",
     "dev:api": "turbo dev --filter=api",
     "dev:web": "turbo dev --filter=web",
     "db:migrate": "pnpm --filter database prisma migrate dev",

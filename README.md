@@ -97,9 +97,16 @@ pnpm dev
 pnpm dev              # Lancer tous les services en dev
 pnpm build            # Build production
 pnpm lint             # Linter
-pnpm test             # Tests unitaires (64 tests)
-pnpm type-check       # Vérification TypeScript
+pnpm test             # Tests unitaires
+pnpm gate             # Gate release (lint + test + build)
+pnpm gate:web:e2e     # Gate E2E web (release web)
 ```
+
+## Engineering Standards
+
+- Contribution workflow: `CONTRIBUTING.md`
+- Branch protection setup: `docs/branch-protection-checklist.md`
+- Execution roadmap: `docs/world-class-erp-plan.md`
 
 ## Spécificités marocaines
 
