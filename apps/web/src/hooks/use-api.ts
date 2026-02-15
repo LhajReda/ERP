@@ -64,6 +64,42 @@ type EnterprisePortfolioResponse = {
   topPerformers?: ApiEntityList;
   riskFarms?: ApiEntityList;
 } & ApiEntity;
+type ReliabilityRouteSnapshot = {
+  route?: string;
+  count?: number;
+  errorRatePercent?: number;
+  p95Ms?: number;
+  avgMs?: number;
+  maxMs?: number;
+} & ApiEntity;
+type ReliabilityOverviewResponse = {
+  generatedAt?: string;
+  processUptimeSeconds?: number;
+  requestVolume?: {
+    total?: number;
+    errors?: number;
+    errorRatePercent?: number;
+    availabilityPercent?: number;
+  } & ApiEntity;
+  latency?: {
+    avgMs?: number;
+    p95Ms?: number;
+    p99Ms?: number;
+    maxMs?: number;
+  } & ApiEntity;
+  sloTargets?: {
+    availabilityPercent?: number;
+    p95Ms?: number;
+  } & ApiEntity;
+  burn?: {
+    availabilityGapPercent?: number;
+    latencyGapMs?: number;
+  } & ApiEntity;
+  statusBreakdown?: Record<string, number>;
+  topSlowRoutes?: ReliabilityRouteSnapshot[];
+  topErrorRoutes?: ReliabilityRouteSnapshot[];
+  activeRoutes?: number;
+} & ApiEntity;
 type UnreadCountResponse = {
   count?: number;
   unreadCount?: number;
@@ -1117,6 +1153,17 @@ export function useEnterprisePortfolio(months = 6) {
       const response = await api.get(`/dashboard/portfolio?months=${months}`);
       return unwrap<EnterprisePortfolioResponse>(response.data);
     },
+  });
+}
+
+export function useReliabilityOverview() {
+  return useQuery({
+    queryKey: ['dashboard-reliability'],
+    queryFn: async () => {
+      const response = await api.get('/dashboard/reliability');
+      return unwrap<ReliabilityOverviewResponse>(response.data);
+    },
+    refetchInterval: 60000,
   });
 }
 

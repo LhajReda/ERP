@@ -20,6 +20,7 @@ import {
   useLowStockAlerts,
   useMarkAllAsRead,
   useNotifications,
+  useReliabilityOverview,
   useUnreadCount,
   useUpdateInvoiceStatus,
 } from '@/hooks/use-api';
@@ -97,6 +98,20 @@ type PortfolioPayload = {
   summary?: Partial<PortfolioSummary>;
   riskFarms?: RiskFarmRecord[];
   operationalAlerts?: OperationalAlert[];
+};
+
+type ReliabilityOverviewPayload = {
+  requestVolume?: {
+    availabilityPercent?: number;
+    errorRatePercent?: number;
+  };
+  latency?: {
+    p95Ms?: number;
+  };
+  burn?: {
+    availabilityGapPercent?: number;
+    latencyGapMs?: number;
+  };
 };
 
 type BudgetStatus = 'NO_BUDGET' | 'HEALTHY' | 'WARNING' | 'HARD_STOP';
@@ -205,6 +220,7 @@ export default function CommandCenterPage() {
   const { data: invoices, isLoading: invoicesLoading } = useInvoices();
   const { data: notifications, isLoading: notificationsLoading } = useNotifications();
   const { data: unreadCount } = useUnreadCount();
+  const { data: reliabilityOverview, isLoading: reliabilityLoading } = useReliabilityOverview();
   const { data: lowStockAlerts, isLoading: lowStockLoading } = useLowStockAlerts(
     activeFarmId || undefined,
   );
@@ -246,6 +262,7 @@ export default function CommandCenterPage() {
   }, [activeFarmId, farmOptions]);
 
   const portfolioPayload = (portfolio || {}) as PortfolioPayload;
+  const reliabilityPayload = (reliabilityOverview || {}) as ReliabilityOverviewPayload;
   const summary = { ...EMPTY_SUMMARY, ...(portfolioPayload.summary || {}) };
   const riskFarms = Array.isArray(portfolioPayload.riskFarms)
     ? portfolioPayload.riskFarms
@@ -296,6 +313,17 @@ export default function CommandCenterPage() {
   const attendanceRate = summary.employees
     ? Math.round((summary.presentEmployees / summary.employees) * 100)
     : 100;
+  const availabilityPercent = Number(
+    reliabilityPayload.requestVolume?.availabilityPercent || 100,
+  );
+  const errorRatePercent = Number(
+    reliabilityPayload.requestVolume?.errorRatePercent || 0,
+  );
+  const p95Latency = Number(reliabilityPayload.latency?.p95Ms || 0);
+  const availabilityGap = Number(
+    reliabilityPayload.burn?.availabilityGapPercent || 0,
+  );
+  const latencyGap = Number(reliabilityPayload.burn?.latencyGapMs || 0);
 
   const activeFarmName =
     farmOptions.find((farm) => (farm.id || farm._id) === activeFarmId)?.name ||
@@ -472,7 +500,7 @@ export default function CommandCenterPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <Card hover={false}>
           <CardContent className="p-5">
             <p className="text-xs text-muted-foreground">Incidents critiques</p>
@@ -500,6 +528,32 @@ export default function CommandCenterPage() {
             <p className="mt-1 text-2xl font-semibold">{attendanceRate}%</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {summary.presentEmployees}/{summary.employees} presents
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover={false}>
+          <CardContent className="p-5">
+            <p className="text-xs text-muted-foreground">Disponibilite API</p>
+            <p className="mt-1 text-2xl font-semibold">
+              {reliabilityLoading ? '-' : `${availabilityPercent.toFixed(2)}%`}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {availabilityGap > 0
+                ? `Gap SLO: ${availabilityGap.toFixed(2)}%`
+                : `Error rate: ${errorRatePercent.toFixed(2)}%`}
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover={false}>
+          <CardContent className="p-5">
+            <p className="text-xs text-muted-foreground">Latence API P95</p>
+            <p className="mt-1 text-2xl font-semibold">
+              {reliabilityLoading ? '-' : `${p95Latency.toFixed(0)} ms`}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {latencyGap > 0
+                ? `Au-dessus SLO: +${latencyGap.toFixed(0)} ms`
+                : 'Sous objectif SLO (300 ms)'}
             </p>
           </CardContent>
         </Card>

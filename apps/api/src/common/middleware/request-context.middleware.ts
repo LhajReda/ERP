@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Logger } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { requestContext } from '../context/request-context';
+import { httpMetricsStore } from '../observability/http-metrics.store';
 
 const REQUEST_ID_HEADER = 'x-request-id';
 const logger = new Logger('HTTP');
@@ -32,6 +33,13 @@ export const requestContextMiddleware = (
   requestContext.run({ requestId, startTime }, () => {
     response.on('finish', () => {
       const durationMs = Date.now() - startTime;
+      httpMetricsStore.record({
+        requestId,
+        method: request.method,
+        path: requestPath,
+        statusCode: response.statusCode,
+        durationMs,
+      });
       logger.log(
         JSON.stringify({
           event: 'http_request',
