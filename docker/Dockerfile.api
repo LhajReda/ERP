@@ -20,9 +20,11 @@ RUN pnpm --filter api build
 
 FROM base AS runner
 ENV NODE_ENV=production
-COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages/database/node_modules/.prisma ./node_modules/.prisma
+RUN addgroup -S fla7a && adduser -S fla7a -G fla7a
+COPY --from=builder --chown=fla7a:fla7a /app/apps/api/dist ./dist
+COPY --from=builder --chown=fla7a:fla7a /app/node_modules ./node_modules
+COPY --from=builder --chown=fla7a:fla7a /app/packages/database/node_modules/.prisma ./node_modules/.prisma
+USER fla7a
 
 EXPOSE 4000
 CMD ["node", "dist/main.js"]
