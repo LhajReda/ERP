@@ -28,6 +28,7 @@ Provide a minimum production security baseline expected by enterprise buyers and
 - Secret scanning workflow (gitleaks).
 - Dependency review workflow on pull requests.
 - Trivy filesystem scan with SARIF upload to code scanning.
+- Release-readiness image scan (API + Web runtime images).
 - Dependabot weekly updates for npm and GitHub Actions.
 
 ## Next Hardening Milestones

@@ -1,0 +1,73 @@
+name: Release Readiness
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  image-security-readiness:
+    name: Build and Scan Runtime Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image (local)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.api
+          load: true
+          tags: fla7a-api:readiness
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Web image (local)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.web
+          load: true
+          tags: fla7a-web:readiness
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Trivy API image scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: image
+          scan-ref: fla7a-api:readiness
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          format: sarif
+          output: trivy-api-image.sarif
+
+      - name: Trivy Web image scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: image
+          scan-ref: fla7a-web:readiness
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          format: sarif
+          output: trivy-web-image.sarif
+
+      - name: Upload API image scan to code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-api-image.sarif
+
+      - name: Upload Web image scan to code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-web-image.sarif

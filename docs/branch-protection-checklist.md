@@ -17,4 +17,5 @@ Configure this in GitHub:
    - `Security / CodeQL Scan`
    - `Security / Secret Scan`
    - `Security / Trivy Filesystem Scan`
+   - `Release Readiness / Build and Scan Runtime Images`
 5. Disable direct pushes to the protected branch.
