@@ -20,10 +20,14 @@ Provide a minimum production security baseline expected by enterprise buyers and
 - Policy-based authorization guard on sensitive surfaces.
 - Sensitive fields redacted in audit logging.
 - Request correlation ID (`x-request-id`) for traceability.
+- AI chat abuse guard with endpoint rate limit (`/api/v1/chat`).
+- Chat history access scoped to conversation owner.
 
 ## SDLC Security Controls
 - CodeQL workflow for static analysis.
 - Secret scanning workflow (gitleaks).
+- Dependency review workflow on pull requests.
+- Trivy filesystem scan with SARIF upload to code scanning.
 - Dependabot weekly updates for npm and GitHub Actions.
 
 ## Next Hardening Milestones

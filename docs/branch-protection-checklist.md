@@ -14,4 +14,7 @@ Configure this in GitHub:
 4. Add required checks:
    - `CI / Lint, Type-check & Test`
    - `PR Title / Conventional PR title`
+   - `Security / CodeQL Scan`
+   - `Security / Secret Scan`
+   - `Security / Trivy Filesystem Scan`
 5. Disable direct pushes to the protected branch.

@@ -13,6 +13,12 @@ import { requestContextMiddleware } from './common/middleware/request-context.mi
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const toPositiveInt = (raw: string | undefined, fallback: number): number => {
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
+  };
+  const authRateLimitMax = toPositiveInt(process.env.AUTH_RATE_LIMIT_MAX, 50);
+  const chatRateLimitMax = toPositiveInt(process.env.CHAT_RATE_LIMIT_MAX, 120);
 
   app.use(requestContextMiddleware);
 
@@ -24,7 +30,17 @@ async function bootstrap() {
     '/api/v1/auth',
     rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 50,
+      max: authRateLimitMax,
+      standardHeaders: true,
+      legacyHeaders: false,
+    }),
+  );
+  // Cost-control and abuse protection for AI chat endpoints.
+  app.use(
+    '/api/v1/chat',
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: chatRateLimitMax,
       standardHeaders: true,
       legacyHeaders: false,
     }),
